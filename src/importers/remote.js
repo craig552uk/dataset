@@ -1,7 +1,7 @@
 (function(global, _) {
 
   var Dataset = global.Miso.Dataset;
-  
+
 
   /**
   * A remote importer is responsible for fetching data from a url.
@@ -22,6 +22,7 @@
     this.params = {
       type : "GET",
       url : _.isFunction(this._url) ? _.bind(this._url, this) : this._url,
+      cache : (undefined === options.cache) ? true : options.cache,
       dataType : options.dataType ? options.dataType : (options.jsonp ? "jsonp" : "json"),
       callback : options.callback
     };
@@ -71,11 +72,16 @@
 
     var url = _.isFunction(options.url) ? options.url() : options.url;
 
+    // Append random characters to query string to prevent response caching in browser
+    if (options.cache === false){
+      url += (rparams.test(url) ? "&" : "?") + Math.random().toString(36).substr(2,16);
+    }
+
     if (options.dataType &&
       (options.dataType === "jsonp" || options.dataType === "script" )) {
 
         Dataset.Xhr.getJSONP(
-          url, 
+          url,
           options.success,
           options.dataType === "script",
           options.error,
@@ -99,6 +105,8 @@
           //  Garbage collect and reset settings.data
           settings.data = null;
         }
+
+        console.log(settings.url);
 
         settings.ajax.open(settings.type, settings.url, settings.async);
         settings.ajax.send(settings.data || null);
@@ -173,7 +181,7 @@
       };
 
       //  Replace callback param and callback name
-      if (parts) { 
+      if (parts) {
         url = url.replace(parts.join("="), parts[0] + "=" + callback);
       }
     }
@@ -199,7 +207,7 @@
           } catch(e) {
             window[callback] = void 0;
           }
-          
+
           //  Garbage collect the script resource
           head.removeChild(script);
         }

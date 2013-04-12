@@ -1,6 +1,6 @@
 (function(global) {
-  
-  var Miso  = global.Miso || {};  
+
+  var Miso  = global.Miso || {};
   var Dataset = Miso.Dataset;
 
   function verifyImport(obj, strictData) {
@@ -33,7 +33,7 @@
     if (strictData.idAttribute !== "_id") {
       checkColumnTypesCustomidAttribute(strictData);
     } else {
-      checkColumnTypes(strictData);  
+      checkColumnTypes(strictData);
     }
   }
 
@@ -65,8 +65,8 @@
   }
 
   test("Basic Strict Import through Dataset API", 47, function() {
-    var ds = new Dataset({ 
-      data : Miso.alphabet_strict, 
+    var ds = new Dataset({
+      data : Miso.alphabet_strict,
       strict: true
     });
     _.when(ds.fetch()).then(function(){
@@ -76,8 +76,8 @@
   });
 
   test("Basic Strict Import through Dataset API with custom idAttribute", 44, function() {
-    var ds = new Miso.Dataset({ 
-      data : Miso.alphabet_strict, 
+    var ds = new Miso.Dataset({
+      data : Miso.alphabet_strict,
       strict: true,
       idAttribute: "character"
     });
@@ -90,11 +90,11 @@
   module("Column creation, coercion &amp; type setting");
 
   test("Manually creating a column", function() {
-    var ds = new Dataset({ 
+    var ds = new Dataset({
       columns : [
         { name : 'testOne' },
         { name : 'testTwo', type: 'time' }
-      ] 
+      ]
     });
     ok(ds._column('testOne').name === 'testOne', 'testOne column created');
     ok(ds._column('testTwo').name === 'testTwo', 'testTwo column created');
@@ -165,12 +165,12 @@
 
   test("Basic json url fetch through Dataset API", 46, function() {
     var url = "data/alphabet_strict.json";
-    var ds = new Dataset({ 
-      url : url, 
-      jsonp : false, 
+    var ds = new Dataset({
+      url : url,
+      jsonp : false,
       strict: true,
       ready : function() {
-        verifyImport({}, this);   
+        verifyImport({}, this);
         start();
       }
     });
@@ -180,13 +180,13 @@
 
   test("Basic json url fetch through Dataset API with custom idAttribute", 43, function() {
     var url = "data/alphabet_strict.json";
-    var ds = new Miso.Dataset({ 
-      url : url, 
-      jsonp : false, 
+    var ds = new Miso.Dataset({
+      url : url,
+      jsonp : false,
       idAttribute : "name",
       strict: true,
       ready : function() {
-        verifyImport({}, this);   
+        verifyImport({}, this);
         start();
       }
     });
@@ -195,14 +195,14 @@
   });
 
   test("Basic json url fetch through Dataset API + url is a function", 46, function() {
-    var ds = new Dataset({ 
+    var ds = new Dataset({
       url : function() {
         return "data/alphabet_strict.json";
-      }, 
-      jsonp : false, 
+      },
+      jsonp : false,
       strict: true,
       ready : function() {
-        verifyImport({}, this);   
+        verifyImport({}, this);
         start();
       }
     });
@@ -212,14 +212,14 @@
 
   test("Basic jsonp url fetch with Dataset API", 46, function() {
     var url = "data/alphabet_obj.json?callback=";
-    var ds = new Dataset({ 
+    var ds = new Dataset({
       url : url,
       jsonp : true,
       extract: function(raw) {
         return raw.data;
       },
       ready : function() {
-        verifyImport({}, this); 
+        verifyImport({}, this);
         start();
       }
     });
@@ -236,7 +236,7 @@
         return raw.data;
       },
       ready : function() {
-        verifyImport({}, this); 
+        verifyImport({}, this);
         start();
       }
     });
@@ -253,7 +253,7 @@
         return raw.data;
       },
       ready : function() {
-        verifyImport({}, this); 
+        verifyImport({}, this);
         start();
       }
     });
@@ -270,7 +270,7 @@
         return raw.data;
       },
       ready : function() {
-        verifyImport({}, this); 
+        verifyImport({}, this);
         start();
       }
     });
@@ -287,7 +287,7 @@
         return raw.data;
       },
       ready : function() {
-        verifyImport({}, this); 
+        verifyImport({}, this);
         ok(typeof window.foobar !== "undefined");
         start();
       },
@@ -300,7 +300,7 @@
 
   test("Basic delimiter parsing test with Dataset API", 46, function() {
 
-    var ds = new Dataset({ 
+    var ds = new Dataset({
       data : window.Miso.alphabet_csv,
       delimiter : ","
     });
@@ -311,21 +311,53 @@
 
   test("Basic delimiter parsing test with Dataset API via url", 46, function() {
     stop();
-    var ds = new Dataset({ 
+    var ds = new Dataset({
       url : "data/alphabet.csv",
       parser: Dataset.Parsers.Delimited
     });
 
     ds.fetch({
       success: function() {
-        verifyImport(Miso.alphabet_strict, this);  
+        verifyImport(Miso.alphabet_strict, this);
+        start();
+      }
+    });
+  });
+
+  test("Basic delimiter parsing test with Dataset API via url with XHR response caching explicitly enabled", 46, function() {
+    stop();
+    var ds = new Dataset({
+      url : "data/alphabet.csv",
+      cache: true,
+      parser: Dataset.Parsers.Delimited
+    });
+
+    ds.fetch({
+      success: function() {
+        verifyImport(Miso.alphabet_strict, this);
+        start();
+      }
+    });
+  });
+
+  test("Basic delimiter parsing test with Dataset API via url with no XHR response caching", 46, function() {
+    stop();
+    var ds = new Dataset({
+      url : "data/alphabet.csv",
+      cache: false,
+      parser: Dataset.Parsers.Delimited
+    });
+
+    ds.fetch({
+      success: function() {
+        verifyImport(Miso.alphabet_strict, this);
         start();
       }
     });
   });
 
   test("Basic delimiter parsing test with custom separator with Dataset API", 46, function() {
-    var ds = new Dataset({ 
+    var ds = new Dataset({
       data : window.Miso.alphabet_customseparator,
       delimiter : "###"
     });
@@ -335,7 +367,7 @@
   });
 
   test("Basic remote delimiter parsing test with custom separator with Dataset API", 46, function() {
-    var ds = new Dataset({ 
+    var ds = new Dataset({
       url : "data/alphabet_customseparator.json",
       delimiter : "###"
     });
@@ -351,7 +383,7 @@
                "1,2,3\n" +
                "1,,5\n" +
                "5,,4";
-    
+
     var ds = new Dataset({
       data : data,
       delimiter : ",",
@@ -363,7 +395,7 @@
         equals(ds.column("Col2").data[2], "CAT");
       }
     });
-    
+
   });
 
   test("Delimiter error catching too many items", 1, function() {
@@ -397,7 +429,7 @@
     ds.fetch({ success : function() {
       equals(ds.length, 3);
     }});
-    
+
   });
 
   test("Delimiter skip rows 2", 1, function() {
@@ -417,7 +449,7 @@
     ds.fetch({ success : function() {
       equals(ds.length, 3);
     }});
-    
+
   });
 
   test("Delimiter error catching not enough items", 1, function() {
@@ -446,7 +478,7 @@
     // ds.fetch().then(function() {
       // ok(ds.length === 71);
       // ok(ds._columns.length === 31);
-      
+
       // start();
     // });
   // });
@@ -455,11 +487,11 @@
   function verifyGoogleSpreadsheet(d, obj) {
 
     ok(_.isEqual(
-      _.keys(d._columnPositionByName), 
+      _.keys(d._columnPositionByName),
       _.keys(obj._columnPositionByName)
     ));
     ok(_.isEqual(
-      d._rowIdByPosition.length, 
+      d._rowIdByPosition.length,
       obj._rowIdByPosition.length)
     );
 
@@ -470,7 +502,7 @@
   }
 
   test("Google spreadsheet dataset test", function() {
-    
+
     var key = "0Asnl0xYK7V16dFpFVmZUUy1taXdFbUJGdGtVdFBXbFE";
     var worksheet = "1";
 
@@ -586,9 +618,9 @@
         } else {
           ok(data[0].id === (initId + (madereqs * 10) ), data[0].id + "," + (initId + (madereqs * 10)));
         }
-        
+
         madereqs++;
-        
+
       },
       error : function(error) {
         console.log(error);
@@ -608,8 +640,8 @@
       interval : 100
     });
 
-    ds.fetch({ 
-      success : function() {  
+    ds.fetch({
+      success : function() {
 
         // done
         if (madereqs === reqs) {
@@ -638,26 +670,26 @@
 
           // check cache sizes
           var cachedRowids = _.map(
-            _.keys(ds._rowPositionById), 
-            function(i) { 
+            _.keys(ds._rowPositionById),
+            function(i) {
               return +i;
             }
           );
 
           ok(_.isEqual(ds._columnPositionByName, { _id : 0, id : 3 , key : 1, value : 2 }));
           equals(ds._rowIdByPosition.length, expectedSize);
-          
+
           ok(_.isEqual(_.values(ds._rowIdByPosition), cachedRowids));
           ok(_.isEqual(cachedRowids, ds._columns[0].data));
-          
+
           start();
         } else {
           madereqs++;
         }
-      
-      }, 
-      error : function(r) { 
-        console.log(r); 
+
+      },
+      error : function(r) {
+        console.log(r);
       }
     });
   });
@@ -667,8 +699,8 @@
 
     var counter,
         baseCounter,
-        requests = 3, 
-        madereqs = 1, 
+        requests = 3,
+        madereqs = 1,
         expectedSize = 3,
         events = [],
         addEvents = [];
@@ -699,7 +731,7 @@
           equals(row.a, counter + 2, 'delta +- 2');
           equals(row.b, counter - 2, 'delta +- 2');
         }
-        if (i % 3 === 2) { 
+        if (i % 3 === 2) {
           counter += 1;
         }
       });
@@ -713,8 +745,8 @@
       addEvents.push(event.deltas);
     });
 
-    ds.fetch({ 
-      success : function() {  
+    ds.fetch({
+      success : function() {
 
         // check dataset length
         equals(ds.length, expectedSize);
@@ -722,7 +754,7 @@
           equals(c.data.length, 3);
         });
 
-        //set the counter on the first req to 
+        //set the counter on the first req to
         //sync req count with server
         if (!counter) {
           counter = ds.rowByPosition(0).a;
@@ -740,7 +772,7 @@
         var row2 = ds.rowByPosition(2);
         equals(row2.a, counter + 2);
         equals(row2.b, counter - 2);
-        
+
         // done
         if (madereqs === requests) {
           ds.importer.stop();
@@ -749,9 +781,9 @@
         }
         madereqs++;
         counter += 1;
-      }, 
-      error : function() { 
-        console.log('ERROR', arguments); 
+      },
+      error : function() {
+        console.log('ERROR', arguments);
       }
     });
   });
@@ -769,13 +801,13 @@
       uniqueAgainst : "key"
     });
 
-    ds.fetch({ 
-      success : function() {  
+    ds.fetch({
+      success : function() {
 
         // done
         if (madereqs === reqs) {
           ds.importer.stop();
-          
+
           // check dataset length
           equals(ds.length, expectedSize);
           ds.eachColumn(function(cn, c) {
@@ -792,18 +824,18 @@
           ok(_.isEqual(idscol, this.column("id").data));
           ok(_.isEqual(keycol, this.column("key").data));
           ok(_.isEqual(valcol, this.column("value").data));
-          
+
            // check cache sizes
           var cachedRowids = _.map(
-            _.keys(ds._rowPositionById), 
-            function(i) { 
+            _.keys(ds._rowPositionById),
+            function(i) {
               return +i;
             }
           );
 
           ok(_.isEqual(ds._columnPositionByName, { _id : 0, id : 3 , key : 1, value : 2 }));
           equals(ds._rowIdByPosition.length, expectedSize);
-          
+
           ok(_.isEqual(_.values(ds._rowIdByPosition), cachedRowids));
           ok(_.isEqual(cachedRowids, ds._columns[0].data));
 
@@ -811,17 +843,17 @@
         } else {
           madereqs++;
         }
-      
-      }, 
-      error : function(r) { 
-        console.log(r); 
+
+      },
+      error : function(r) {
+        console.log(r);
       }
     });
   });
 
   test("Polling with reset on Fetch", function() {
     stop();
-    
+
 
     var startId = Math.floor(Math.random() * 100);
     var reqs = 6, madereqs = 1, expectedSize = 10;
@@ -852,22 +884,22 @@
             keycol.push(_i + "_key");
             valcol.push(_i + "_value");
           }
-          
+
           ok(_.isEqual(idscol, this.column("id").data));
           ok(_.isEqual(keycol, this.column("key").data));
           ok(_.isEqual(valcol, this.column("value").data));
-          
+
            // check cache sizes
           var cachedRowids = _.map(
-            _.keys(ds._rowPositionById), 
-            function(i) { 
+            _.keys(ds._rowPositionById),
+            function(i) {
               return +i;
             }
           );
 
           ok(_.isEqual(ds._columnPositionByName, { _id : 0, id : 3 , key : 1, value : 2 }));
           equals(ds._rowIdByPosition.length, expectedSize);
-          
+
           ok(_.isEqual(_.values(ds._rowIdByPosition), cachedRowids));
           ok(_.isEqual(cachedRowids, ds._columns[0].data));
           start();
